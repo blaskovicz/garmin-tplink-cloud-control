@@ -107,8 +107,8 @@ class BaseLayoutView extends Ui.View {
 	    	self.drawToast(dc, Graphics.COLOR_RED, pollerState[:text]);
 	    	self.startToastPollerTimeout();
 		} else {
- 	    	dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
- 	    	dc.drawText(self.width/2,  Constants.HEIGHT_FONT_TINY - 10, Graphics.FONT_TINY, "Garmin Nest", Graphics.TEXT_JUSTIFY_CENTER);
+ 	    	dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+ 	    	dc.drawText(self.width/2,  Constants.HEIGHT_FONT_TINY - 10, Graphics.FONT_TINY, "Garmin TPLink", Graphics.TEXT_JUSTIFY_CENTER);
  	    	dc.drawLine(0,  Constants.HEIGHT_FONT_TINY*2 - 10, self.width,  Constants.HEIGHT_FONT_TINY*2 - 10);
  	    }
 

@@ -115,12 +115,15 @@ class Logger {
 			}			
 		}	
 	}
-	protected function initialize(level) {
+	function initialize(level) {
+		if (_log != null) {
+			throw new InvalidArgumentError("new Logger() unexpectedly invoked");
+		}
 		if (level == null) {
 			return;
 		}
 		self.setLevel(level);
-	}
+	}		
 }
 
 // vi:syntax=javascript filetype=javascript

@@ -86,23 +86,23 @@ class SummaryView extends BaseLayoutView {
     	var camerasUpdatedAt = NestApi.getInstance().getCamerasUpdatedAt();
     	if (!NestApi.getInstance().hasCameras()) {
 	    	dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-			dc.drawText(self.width/2, self.offsetY + Constants.HEIGHT_FONT_TINY, Graphics.FONT_TINY, "No cameras found.\nAre you the\nNest Home owner?", Graphics.TEXT_JUSTIFY_CENTER);
+			dc.drawText(self.width/2, self.offsetY + Constants.HEIGHT_FONT_TINY, Graphics.FONT_TINY, "No devices found.\nAre you the\nTPLink device owner?", Graphics.TEXT_JUSTIFY_CENTER);
     	} else {
     		dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-    		dc.drawText(self.width/2, self.offsetY, Graphics.FONT_SMALL, "Camera Status:", Graphics.TEXT_JUSTIFY_CENTER);
+    		dc.drawText(self.width/2, self.offsetY, Graphics.FONT_SMALL, "Device Status:", Graphics.TEXT_JUSTIFY_CENTER);
     		
-    		var status = {"Online" => 0, "Live" => 0};
+    		var status = {"Connected" => 0, "Powered On" => 0};
     		for (var i = 0; i < cameraList.size(); i++) {
     			var item = cameraList[i];
-    			if (item["is_online"]) {
-    				status["Online"]++;
+    			if (item["status"] == 1) {
+    				status["Connected"]++;
     			}
-    			if (item["is_streaming"]) {
-    				status["Live"]++;
+    			if (item["is_on"]) {
+    				status["Powered On"]++;
     			}
     		}
     		
-    		// online means connected to nest cloud, streaming means digitally taking pictures
+    		// connected means connected to tplink/kasa cloud, on means literally turned on with power flowing through
     		var statuses = status.keys();
     		for (var i = 0; i < statuses.size(); i++) {
     			var icon;

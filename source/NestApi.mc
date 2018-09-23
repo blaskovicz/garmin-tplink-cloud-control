@@ -169,7 +169,7 @@ static class NestApi {
 		}
 		Logger.getInstance().info("ref=nest-api at=request-camera-status");	
         Comm.makeWebRequest(
-            "https://developer-api.nest.com/devices/cameras",
+        	Lang.format("$1$/api/v1/devices", [Env.NestApiProxyURI]),
             null,
             {
             	:method => Comm.HTTP_REQUEST_METHOD_GET,
@@ -191,7 +191,7 @@ static class NestApi {
 	    		self.setPollerStateRequestError(Lang.format("Error $1$", [responseCode]));
     		}
     	} else if (self.setPollerStateRequestSuccess()) {
-    		var cameraList = data.values();
+    		var cameraList = data;
     		// clean out some of the data we don't use since the memory usage may be too beefy
     		for (var i = 0; i < cameraList.size(); i++) {
     			for (var j = 0; j < unusedCameraFields.size(); j++) {
@@ -209,20 +209,26 @@ static class NestApi {
     	if (accessToken == null) {
     		return;
     	}
-		if(!self.setStateRequesting((camera["is_streaming"] ? "Disabling" : "Enabling") + " stream...")) {
+    	var nextOnState = camera["is_on"] ? "off" : "on";
+		if(!self.setStateRequesting("Powering " + nextOnState + "...")) {
 			return;
 		}
-    	Logger.getInstance().infoF("ref=nest-api at=request-toggle-streaming camera=$1$ to=$2$", [camera["device_id"], !camera["is_streaming"]]);
+		if(camera["status"] != 1) {
+    		self.setStateRequestError(Lang.format("$1$ disconnected.\nConnect before power $2$.", [camera["alias"], nextOnState]));
+    		return;
+    	}
+    	Logger.getInstance().infoF("ref=nest-api at=request-toggle-streaming camera=$1$ to=$2$", [camera["deviceId"], !camera["is_on"]]);
     	self.temp = camera;  	
         Comm.makeWebRequest(
-            Lang.format("$1$/devices/cameras/$2$", [Env.NestApiProxyURI, camera["device_id"]]),
-            { "is_streaming" => !camera["is_streaming"] },
+            Lang.format("$1$/api/v1/devices/$2$", [Env.NestApiProxyURI, camera["deviceId"]]),
+            { "is_on" => !camera["is_on"] },
             {
             	:method => Comm.HTTP_REQUEST_METHOD_PUT,
             	:headers => {
             		"Authorization" => Lang.format("Bearer $1$", [accessToken]),
             		"Content-Type" => Comm.REQUEST_CONTENT_TYPE_JSON
-            	}
+            	},
+            	:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_JSON
             },
         	self.method(:onCameraEnableStreamingResponse)
     	);    
@@ -233,7 +239,7 @@ static class NestApi {
     	if (responseCode != 200) {
     		self.setStateRequestError(Lang.format("Failed to update camera:\nCode $1$.", [responseCode]));
     	} else {
-    		self.temp["is_streaming"] = !self.temp["is_streaming"];
+    		self.temp["is_on"] = !self.temp["is_on"];
     		self.temp = null;
     		self.setStateRequestSuccess();
     		// self.requestCameraStatus(); // state may be replicating still
@@ -304,11 +310,10 @@ static class NestApi {
     	Logger.getInstance().info("ref=nest-api at=request-oauth-connect");
     	self.connecting = true;
     	Comm.makeOAuthRequest(
-    		"https://home.nest.com/login/oauth2",
+    		Lang.format("$1$/oauth2/authorize", [Env.NestApiProxyURI]),
     		{
-	    		//"scope" => "public",
 	    		"redirect_uri" => "https://localhost",
-	    		//"response_type" => "code",
+	    		"response_type" => "code",
 	    		"client_id" => Env.NestClientId,
 	    		"state" => "TODO"
 	    	},
@@ -365,7 +370,7 @@ static class NestApi {
 		//}
     	Logger.getInstance().infoF("ref=nest-api at=request-access-token code='$1$'", [code]);
         Comm.makeWebRequest(
-            "https://api.home.nest.com/oauth2/access_token",
+        	Lang.format("$1$/oauth2/token", [Env.NestApiProxyURI]),
             {
             	"grant_type" => "authorization_code",
             	"redirect_uri" => "https://localhost",
@@ -384,7 +389,7 @@ static class NestApi {
     	Logger.getInstance().infoF("ref=nest-api at=on-oauth-response-phase-2 response-code='$1$' data='$2$'", [responseCode, data]);
     	Cron.getInstance().unregister(cancelOauthTimerName);
         self.connecting = false;
-        if(data != null) {
+        if(data != null && responseCode == 200) {
 			if(!self.setStateRequestSuccess()) {
 				return;
 			}
