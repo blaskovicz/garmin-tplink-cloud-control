@@ -1,14 +1,16 @@
-# garmin-nest-camera-control [![Build Status](https://travis-ci.org/blaskovicz/garmin-nest-camera-control.svg?branch=master)](https://travis-ci.org/blaskovicz/garmin-nest-camera-control)
->Control and visualize the state of your Nest Cameras from your Garmin Wearable.
+# garmin-tplink-cloud-control [![Build Status](https://travis-ci.org/blaskovicz/garmin-tplink-cloud-control.svg?branch=master)](https://travis-ci.org/blaskovicz/garmin-tplink-cloud-control)
+>Control and visualize the state of your TPLink Cloud / Kasa devices from your Garmin Wearable.
 
 ## Features
-* Oauth2 authentication with Nest API
-* View the state of all Nest cameras in an owned household (online, offline, streaming)
-* Toggle the streaming state of each camera
+* View the state of all TPLink devices in an owned household (online, offline, powered on, powered off)
+
+* Toggle the power state of each connected device.
+
+* Oauth2 authentication
 
 ## Screenshots
-![summary view](https://i.imgur.com/seIPLeU.png)
-![list view](https://i.imgur.com/8vrIvEq.png)
+![summary view](https://i.imgur.com/Y3txYdm.png)
+![list view](https://i.imgur.com/06RGyTD.png)
 
 ## Development
 
