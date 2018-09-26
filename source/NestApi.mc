@@ -42,6 +42,9 @@ static class NestApi {
 	}
 
 	function initialize() {
+		if (_api != null) {
+			throw new InvalidArgumentError("new NestApi() unexpectedly invoked");
+		}
 		Logger.getInstance().info("ref=nest-api at=initialize");
 		Comm.registerForOAuthMessages(self.method(:onOauthResponsePhase1));
 	}
