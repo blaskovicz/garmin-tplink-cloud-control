@@ -36,13 +36,17 @@ static class Cron {
 			Logger.getInstance().warnF("Job repeat time $1$ doesn't schedule roundly with cron loop; check config for job=$2$", [everyMs, timerName]);
 		}
 
-		self.jobs.put(timerName, {
+		var jobConfig = {
 			:enabled => true,
 			:every => everyMs,
 			:sinceLast => 0,
 			:callback => callback,
 			:repeat => repeat
-		});
+		};
+
+		jobConfig[:callback].invoke();
+
+		self.jobs.put(timerName, jobConfig);
 	}
 	
 	function isRegistered(timerName) {
@@ -93,3 +97,5 @@ static class Cron {
 		}
 	}
 }
+
+// vi:syntax=javascript filetype=javascript

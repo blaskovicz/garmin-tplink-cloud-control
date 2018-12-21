@@ -11,9 +11,11 @@ class Logger {
 		LevelDebug = 0,
 		LevelInfo = 1,
 		LevelWarn = 2,
-		LevelError = 3
+		LevelError = 3,
+		LevelMute = 4
 	}
-	
+
+	protected var muted = null;
 	protected var level = LevelDebug;
 	static function getInstance() {
 		if (_log == null) {
@@ -41,6 +43,20 @@ class Logger {
 		}
 		return Lang.format(msg, args);
 	}
+	function isMuted() {
+		return LevelMute == self.level;
+	}
+	function mute() {
+		self.muted = self.level;
+		self.level = LevelMute;
+	}
+	function unmute() {
+		if (self.muted == null) {
+			return;
+		}
+		self.level = self.muted;
+		self.muted = null;
+	}
 	private function log(level, msg) {
 		// too verbose for current setting
 		if (level < self.level) {
@@ -52,15 +68,27 @@ class Logger {
 		);
 	}
 	function debugF(msg, args) {
+		if (LevelDebug < self.level) {
+			return;
+		}
 		self.log(LevelDebug, formatMessageAndArgs(msg, args));
 	}
 	function infoF(msg, args) {
+		if (LevelInfo < self.level) {
+			return;
+		}
 		self.log(LevelInfo, formatMessageAndArgs(msg, args));
 	}
 	function warnF(msg, args) {
+		if (LevelWarn < self.level) {
+			return;
+		}
 		self.log(LevelWarn, formatMessageAndArgs(msg, args));
 	}
 	function errorF(msg, args) {
+		if (LevelError < self.level) {
+			return;
+		}
 		self.log(LevelError, formatMessageAndArgs(msg, args));
 	}
 	function fatalF(msg, args) {

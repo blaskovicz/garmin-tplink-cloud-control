@@ -18,13 +18,14 @@ class GNCCApp extends App.AppBase {
     // onStart() is called on application start up
     function onStart(state) {
     	Logger.getInstance().info("ref=gncc-app at=on-start");
-    	Cron.getInstance();
-    	NestApi.getInstance().startTimer();    	
+    	StatsWatcherTask.getInstance().startTimer();
+    	NestApi.getInstance().startTimer();
     }
 
     // onStop() is called when your application is exiting
     function onStop(state) {
     	Logger.getInstance().infoF("ref=gncc-app at=on-stop state=$1$", state);
+    	StatsWatcherTask.getInstance().stopTimer();
     	NestApi.getInstance().stopTimer();
     }
     
