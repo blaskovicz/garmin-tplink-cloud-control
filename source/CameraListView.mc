@@ -14,12 +14,17 @@ class CameraListDelegate extends Ui.BehaviorDelegate {
         BehaviorDelegate.initialize();
     }
     
+    function onSelect() {
+		var camera = NestApi.getInstance().getCameraList()[self.page];
+		NestApi.getInstance().requestToggleStreaming(camera);
+    	return true;
+    }
+    
     function onKey(ev) {
         var key = ev.getKey();
         Logger.getInstance().infoF("ref=camera-list-delegate at=on-key key=$1$", [key]);
         if (key == Ui.KEY_START || key == Ui.KEY_ENTER) {
-			var camera = NestApi.getInstance().getCameraList()[self.page];
-			NestApi.getInstance().requestToggleStreaming(camera);
+			return onSelect();
         } else if (key == Ui.KEY_DOWN) {
             return onNextPage();
         } else if (key == Ui.KEY_UP) {

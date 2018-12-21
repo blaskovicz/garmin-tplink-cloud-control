@@ -13,7 +13,8 @@ var _api;
 // TODO: buffer, splay and retry request to handle BLE QUEUE FULL error (code -101)
 // TODO also a way of queueing or handlying multiple request/response pairs
 static class NestApi {
-	static const unusedCameraFields = ["app_url", "web_url", "last_event", "where_id", "where_name", "structure_id", "software_version", "name_long", "last_is_online_change", "is_video_history_enabled", "is_audio_input_enabled"];
+	// static const unusedCameraFields = ["app_url", "web_url", "last_event", "where_id", "where_name", "structure_id", "software_version", "name_long", "last_is_online_change", "is_video_history_enabled", "is_audio_input_enabled"];
+	static const unusedCameraFields = ["fwId", "hwId", "appServerUrl", "deviceHwVer", "deviceMac", "oemId", "isSameRegion", "role", "fwVer", "deviceName", "deviceType"];
 
 	enum {
 		StateRequestError = 0,
@@ -194,6 +195,8 @@ static class NestApi {
 	    		self.setPollerStateRequestError(Lang.format("Error $1$", [responseCode]));
     		}
     	} else if (self.setPollerStateRequestSuccess()) {
+    		Properties.clearCameraList();
+
     		var cameraList = data;
     		// clean out some of the data we don't use since the memory usage may be too beefy
     		for (var i = 0; i < cameraList.size(); i++) {

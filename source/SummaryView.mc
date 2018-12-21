@@ -14,25 +14,34 @@ class SummaryDelegate extends Ui.BehaviorDelegate {
     	self.summaryUi = summaryUi;
         BehaviorDelegate.initialize();
     }
+    
+    function onBack() {
+    	Ui.popView(Ui.SLIDE_IMMEDIATE);
+    	return true;
+    }
 
-    function onKey(ev) {
-        var key = ev.getKey();
-        if (Ui.KEY_START != key && Ui.KEY_ENTER != key) {
-        	return false;
-        }
-
-    	Logger.getInstance().info("ref=summary-delegate at=on-ok");
+	function onSelect() {
     	if (!NestApi.getInstance().isConnected()) {
     		NestApi.getInstance().requestOauthConnect();
-    		return true;
     	} else if (NestApi.getInstance().hasCameras()) {
     		var view = new CameraListView();
     		Ui.pushView(view, new CameraListDelegate(view), Ui.SLIDE_LEFT);
-    		return true;
     	} else {
     		NestApi.getInstance().requestCameraStatus();
     	}
-    	return false;
+    	return true;
+	}
+
+    function onKey(ev) {
+        var key = ev.getKey();
+        Logger.getInstance().infoF("ref=summary-delegate at=on-key key=$1$", [key]);
+
+        if (Ui.KEY_START == key || Ui.KEY_ENTER == key) {        
+        	return onSelect();
+        } else if (key == Ui.KEY_ESC || key == Ui.KEY_LAP) {
+            return onBack();
+        }
+        return false;
     }
 }
    

@@ -32,6 +32,14 @@ static class Properties {
 		Logger.getInstance().info("ref=properties at=get-camera-list");
 		return cameraList;
 	}
+	static function clearCameraList() {
+		if (getApp().getProperty("camera_list") == null) {
+			return;
+		}
+
+		Logger.getInstance().info("ref=properties at=clear-camera-list");
+		getApp().setProperty("camera_list", null);
+	}
 	static function setCameraList(cameraList) {
 		if (!(cameraList instanceof Lang.Array)) {
 			throw new InvalidArgumentError("expected camera_list to be Toybox.Lang.Array");
